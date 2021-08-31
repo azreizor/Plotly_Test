@@ -1,0 +1,23 @@
+{% extends 'plantilla.html' %}
+
+{% block titulopagina %} Buenas!!!!! {% endblock %}
+
+{% block contentfluid %}
+<!-- ### un include directo de una tabla {% include 'include.html' %} -->
+<div class="col-12">
+    <div class="card">
+        <p>holi</p>
+        {% for paises in paises %}
+
+        {{paises}}
+        
+
+        {% endfor %}
+
+        
+    </div>
+</div>
+
+{% endblock %}
+
+
