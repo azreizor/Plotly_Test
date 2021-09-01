@@ -216,12 +216,14 @@
         <div class="content-body">
             <!-- row -->
             <div class="container-fluid">
+                <div class="row"></div>
                 {% block contentfluid %}
-                <div class="row">
+                
 
 
-                </div>
+                
                 {% endblock %}
+                </div>
             </div>
         </div>
         <!--**********************************
@@ -270,6 +272,8 @@
 <!-- Datatable -->
 <script src="{{url_for('static', filename = './vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{url_for('static', filename = './js/plugins-init/datatables.init.js')}}"></script>
-
+<script src="{{url_for('static', filename = './js/plotly-latest.min.js')}}"></script>
+{% block script %}
+{% endblock %}
 
 </html>

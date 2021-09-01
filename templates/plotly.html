@@ -1,17 +1,17 @@
 {% extends 'plantilla.html' %}
 
-{% block titulopagina %} Plotly {% endblock %}
+{% block titulopagina %} GRAFICO PLOTLY {% endblock %}
 
 {% block contentfluid %}
-<!-- ### un include directo de una tabla {% include 'include.html' %} -->
-<div class="col-12">
-    <div class="card">
-        <p>PLOTLY</p>
 
+<div id="chart" class="chart"></div>
+GRAFICO PLOTLY
 
-        
-    </div>
-</div>
 {% endblock %}
 
-
+{% block script %}
+<script type="text/javascript">
+    var graphs = {{graphJSON | safe}};
+    Plotly.plot("chart",graphs,{});        
+</script>
+{% endblock %}
