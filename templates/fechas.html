@@ -1,0 +1,61 @@
+{% extends 'plantilla.html' %}
+
+
+{% block titulopagina %} DatePicker {% endblock %}
+
+
+{% block link %}
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/pickadate/themes/default.date.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/pickadate/themes/default.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css')}}" rel="stylesheet">
+{% endblock %}
+
+
+{% block contentfluid %}
+<div class="row">
+    <div class="col-12">
+        <form action="{{('/post')}}" method="POST">
+            <div class="card col-md-6">
+                <div>
+                    <div class="card-header">
+                        <h4 class="card-title">Pick-Date picker</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1">Default picker</p>
+                        <input name="calendar1" class="datepicker-default form-control" id="datepicker">
+                    </div>
+                </div>
+            </div>
+            <div class="card col-md-6">
+                <div class="card-header">
+                    <h4 class="card-title">Material Date picker</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-material">
+                        <div class="col-xl-6 col-xxl-6 col-md-6">
+                            <label>Default Material Date Picker</label>
+                            <input name="calendar2" type="text" class="form-control" placeholder="2017-06-04" id="mdate">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <button type="submit" class="btn btn-success">Primary</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+<script src="{{url_for('static', filename = 'vendor/moment/moment.min.js')}}"></script>
+<script src="{{url_for('static', filename = 'vendor/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js')}}"></script>
+<script src="{{url_for('static', filename = 'vendor/pickadate/picker.js')}}"></script>
+<script src="{{url_for('static', filename = 'vendor/pickadate/picker.date.js')}}"></script>
+<script src="{{url_for('static', filename = 'js/plugins-init/material-date-picker-init.js')}}"></script>
+<script src="{{url_for('static', filename = 'js/plugins-init/pickadate-init.js')}}"></script>
+{% endblock %}

@@ -4,17 +4,17 @@
 
 {% block contentfluid %}
 
+
 <div id="chart" class="chart"></div>
-PANDAS
+
 
 {% endblock %}
 
 {% block script %}
-<!-- 
+
 <script type="text/javascript">
-    var graphs = {{graphJSON | safe}};
+    var graphs = {{grafico | safe}};
     Plotly.plot("chart",graphs,{});
-    var graphs2 = {{graphJSON2 | safe}};
-    Plotly.plot("grafico2", graphs2,{});
-</script> -->
+
+</script>
 {% endblock %}
