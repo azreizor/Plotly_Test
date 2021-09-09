@@ -1,40 +1,45 @@
 import json
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import plotly
 import plotly.express as px
 from datetime import date, datetime, time
 
-from werkzeug.wrappers import request
-
 app = Flask(__name__)
 @app.route("/") # el nombre de la url de solicitud
+#-------------------------------------------------------------------------------
 def index():
     return render_template("index.html")
+#-------------------------------------------------------------------------------
+@app.route("/post_filtro_fecha", methods = ['POST'])
+def post_filtro_fecha():
+    if request.method == "POST":
+        fecha_inicio = request.form["calendar1"]
+        fecha_fin = request.form["calendar2"]
+        df = pd.read_excel('BASE_AGROSPARE_COMPLETA.xlsx', engine='openpyxl', sheet_name="VENTAS_MENSUALES")
+        df["FECHA"] = pd.to_datetime(df["FECHA"])
+        df = df.head(10)
+        mascara = (df["FECHA"] >= fecha_inicio) & (df["FECHA"] <= fecha_fin)
+        datos = []
+        mascara = pd.DataFrame(mascara)
+        indice = mascara["FECHA"].size
+        for numero in range(indice):
+            if mascara["FECHA"].loc[numero] == True:
+                datos.append(df.loc[numero])
+                print(df["FECHA"].loc[numero])
+        df_filtrado = pd.DataFrame(datos)
+        print(df_filtrado)
+
+        return render_template("post_filtro_fecha.html")
+    else:
+        return redirect(url_for('pre_filtro_fecha'))
 
 
-
-
-
-@app.route("/post", methods = ["POST"])
-def post():
-    calendar1 = request.form["calendar1"]
-    print(calendar1)
-    calendar2 = request.form["calendar2"]
-    return render_template("post.html", calendar1=calendar1, calendar2=calendar2)
-
-
-
-
-
-
-
-
-
-@app.route("/fechas")
-def fechas():
-    return render_template("fechas.html")
-
+#-------------------------------------------------------------------------------
+@app.route("/pre_filtro_fecha")
+def pre_filtro_fecha():
+    return render_template("pre_filtro_fecha.html")
+#-------------------------------------------------------------------------------
 @app.route("/pandas")
 def pandasdf():
     df = pd.read_excel('BASE_AGROSPARE_COMPLETA.xlsx', engine='openpyxl', sheet_name="VENTAS_MENSUALES")
@@ -75,18 +80,18 @@ def pandasdf():
     graficoJSON = json.dumps(figura, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template("pandas.html", grafico = graficoJSON)
 
-
+#-------------------------------------------------------------------------------
 @app.route("/crear_json_ventas")
 def crear_json_ventas():
     df = pd.read_csv("VENTAS_SEMANALES_AGROSPARE.csv", sep=";")
     df.to_json("ventas2.json")
     return render_template("crear_json_ventas.html")
-
+#-------------------------------------------------------------------------------
 @app.route("/leer_json_ventas")
 def leer_json_ventas():
     json = pd.read_json("ventas2.json")
     return render_template("leer_json_ventas.html", json = json)
-
+#-------------------------------------------------------------------------------
 @app.route('/plotly1')
 def plotly_1():
     df = pd.DataFrame({
@@ -103,7 +108,7 @@ def plotly_1():
     San Francisco and Montreal would probably not come up with this chart.
     """
     return render_template('plotly.html', graphJSON=graphJSON, graphJSON2=graphJSON, header=header,description=description)
-
+#-------------------------------------------------------------------------------
 
 
 

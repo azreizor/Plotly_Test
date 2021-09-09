@@ -1,0 +1,52 @@
+{% extends 'plantilla.html' %}
+
+
+{% block titulopagina %} DatePicker {% endblock %}
+
+
+{% block link %}
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/pickadate/themes/default.date.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/pickadate/themes/default.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static', filename = 'vendor/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css')}}" rel="stylesheet">
+{% endblock %}
+
+
+{% block contentfluid %}
+<div class="row">
+    <div class="col-2">
+    </div>
+    <div class="col-8">
+        <form action="/post_filtro_fecha" method="POST">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Filtro de Fechas</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row form-material">
+                        <div class="col-xl-6 col-xxl-6 col-xs-6 col-md-12">
+                            <label>Fecha Inicial</label>
+                            <input type="date" name="calendar1" class="form-control" id="datepicker" required data-provide="datepicker">
+                        </div>
+                        <div class="col-xl-6 col-xxl-6 col-xs-6 col-md-12">
+                            <label>Fecha Final</label>
+                            <input type="date" name="calendar2" class=" form-control" id="datepicker" required>
+                        </div>
+                    </div>
+                    <div>
+                        <br>
+                        <button type="submit" class="btn btn-success">Primary</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+{% endblock %}
