@@ -11,6 +11,55 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 #-------------------------------------------------------------------------------
+@app.route("/diario")
+def diario():
+    df = pd.read_excel('BASE_AGROSPARE_COMPLETA.xlsx', engine='openpyxl', sheet_name="VENTAS_DIARIAS")
+    #df = df.head(61)
+    df["FECHA"] = pd.to_datetime(df["FECHA"])
+
+    sumatoria_dia = df.groupby("DIA_SEMANA").sum()
+    sumatoria_mes = df.groupby("MES").sum()
+    sumatoria_estacion = df.groupby("ESTACION").sum()
+    sumatoria_año = df.groupby("AÑO").sum()
+    print("salto linea------------dia-------")
+    print(sumatoria_dia)
+    print("salto linea------------mes-------")
+    print(sumatoria_mes)
+    print("salto linea-----------estacion------")
+    print(sumatoria_estacion)
+    print("salto linea------------año------")
+    print(sumatoria_año)
+    print("/////////")
+    print("/////////")
+    print("/////////")
+    print("------------nuevo list largest ----------------")
+    dia_top3 = sumatoria_dia.nlargest(3,"TOTAL_DIARIO")
+    mes_top3 = sumatoria_mes.nlargest(3,"TOTAL_DIARIO")
+    estacion_top3 = sumatoria_estacion.nlargest(3,"TOTAL_DIARIO")
+    año_top3 = sumatoria_año.nlargest(3,"TOTAL_DIARIO")
+    print("salto linea------------dia-------")
+    print(dia_top3)
+    print("salto linea------------mes-------")
+    print(mes_top3)
+    print("salto linea-----------estacion------")
+    print(estacion_top3)
+    print("salto linea------------año------")
+    print(año_top3)
+
+
+    #temporadas = pd.unique(df["ESTACION"])                     #lista las diferentes temporadas
+    #species_counts = df.groupby("ESTACION")["FECHA"].count()   #cuenta el criterio Estacion Contando la columna Fecha
+    #sumatoria = df.groupby("ESTACION").sum()                   #calcula la sumatoria de los registros por un criterio
+
+    
+
+
+
+
+
+
+    return render_template("diario.html")
+#-------------------------------------------------------------------------------
 @app.route("/post_filtro_fecha", methods = ['POST'])
 def post_filtro_fecha():
     if request.method == "POST":
@@ -54,7 +103,7 @@ def pandasdf():
     #print(df["FECHA"].size)                #imprime la cantidad de registros existentes en la comuna FECHA
     #print(df.columns)                      #imprime los nombres de las columnas del dataframe
     #print(df.index)                        #imprime el total de registros del dataframe
-    #print(df.rename(columns= 
+    #print(df.rename(columns=
     #{"FECHA":"fecha", "TOTAL_SEMANAL":"total"} #imprime el dataframe con el renombramiento de las columnas
     #))
     #print(pd.to_datetime(df["FECHA"]))     #imprime la columna FECHA en formato datetime
