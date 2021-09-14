@@ -1,5 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, url_for
+from numpy import mod
 import pandas as pd
 import plotly
 import plotly.express as px, plotly.graph_objects as go
@@ -14,11 +15,11 @@ def index():
 @app.route("/diario")
 def diario():
     df = pd.read_excel('BASE_AGROSPARE_COMPLETA.xlsx', engine='openpyxl', sheet_name="VENTAS_DIARIAS")
-    df["FECHA"] = pd.to_datetime(df["FECHA"])
+    df["FECHA"] = pd.to_datetime(df["FECHA"]).dt.date
     sumatoria_dia = df.groupby("DIA_SEMANA").sum()
     dia_top3 = sumatoria_dia.nlargest(3,"TOTAL_DIARIO")
     dias = []
-    colores = ["primary", "danger", "warning"]
+    colores = ["success", "warning", "danger"]
     for numero in range(dia_top3["TOTAL_DIARIO"].size):
         dias.append(dia_top3.index[numero])
     dia_top3["DIA"] = dias
@@ -30,7 +31,24 @@ def diario():
     fig.update_traces(textinfo="percent+label")
     graficoJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template("diario.html", grafico = graficoJSON, top3=lista_dias)
+    fig2 = go.Figure()
+    fig2.add_trace(go.Scatter(x=df["FECHA"], y=df["TOTAL_DIARIO"],
+                    mode='lines',
+                    name='lines'))
+    grafico2JSON = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
+
+    fig3 = go.Figure(go.Scatter(x = df['FECHA'], y = df['TOTAL_DIARIO'], mode='lines'))
+    grafico3JSON = json.dumps(fig3, cls=plotly.utils.PlotlyJSONEncoder)
+
+    fig4 = go.Figure()
+    fig4.add_trace(go.Scatter(x=list(df["FECHA"]), y=list(df["TOTAL_DIARIO"])))
+    grafico4JSON = json.dumps(fig4, cls=plotly.utils.PlotlyJSONEncoder)
+
+    lista_datos = df.values.tolist()
+    print(df.head(1))
+
+    return render_template("diario.html", grafico = graficoJSON, top3=lista_dias, plot2 = grafico2JSON, plot3 = grafico3JSON,
+    plot4 = grafico4JSON, lista_datos=lista_datos)
 
 
 
