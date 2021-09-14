@@ -2,7 +2,7 @@ import json
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import plotly
-import plotly.express as px
+import plotly.express as px, plotly.graph_objects as go
 from datetime import date, datetime, time
 
 app = Flask(__name__)
@@ -14,51 +14,26 @@ def index():
 @app.route("/diario")
 def diario():
     df = pd.read_excel('BASE_AGROSPARE_COMPLETA.xlsx', engine='openpyxl', sheet_name="VENTAS_DIARIAS")
-    #df = df.head(61)
     df["FECHA"] = pd.to_datetime(df["FECHA"])
-
     sumatoria_dia = df.groupby("DIA_SEMANA").sum()
-    sumatoria_mes = df.groupby("MES").sum()
-    sumatoria_estacion = df.groupby("ESTACION").sum()
-    sumatoria_año = df.groupby("AÑO").sum()
-    print("salto linea------------dia-------")
-    print(sumatoria_dia)
-    print("salto linea------------mes-------")
-    print(sumatoria_mes)
-    print("salto linea-----------estacion------")
-    print(sumatoria_estacion)
-    print("salto linea------------año------")
-    print(sumatoria_año)
-    print("/////////")
-    print("/////////")
-    print("/////////")
-    print("------------nuevo list largest ----------------")
     dia_top3 = sumatoria_dia.nlargest(3,"TOTAL_DIARIO")
-    mes_top3 = sumatoria_mes.nlargest(3,"TOTAL_DIARIO")
-    estacion_top3 = sumatoria_estacion.nlargest(3,"TOTAL_DIARIO")
-    año_top3 = sumatoria_año.nlargest(3,"TOTAL_DIARIO")
-    print("salto linea------------dia-------")
+    dias = []
+    colores = ["primary", "danger", "warning"]
+    for numero in range(dia_top3["TOTAL_DIARIO"].size):
+        dias.append(dia_top3.index[numero])
+    dia_top3["DIA"] = dias
+    dia_top3["COLORES"] = colores
     print(dia_top3)
-    print("salto linea------------mes-------")
-    print(mes_top3)
-    print("salto linea-----------estacion------")
-    print(estacion_top3)
-    print("salto linea------------año------")
-    print(año_top3)
+    lista_dias = dia_top3.values.tolist()
+    print(lista_dias)
+    fig = px.pie(data_frame = df, names = 'DIA_SEMANA' , values = 'TOTAL_DIARIO', title="Ventas Diarias")
+    fig.update_traces(textinfo="percent+label")
+    graficoJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-
-    #temporadas = pd.unique(df["ESTACION"])                     #lista las diferentes temporadas
-    #species_counts = df.groupby("ESTACION")["FECHA"].count()   #cuenta el criterio Estacion Contando la columna Fecha
-    #sumatoria = df.groupby("ESTACION").sum()                   #calcula la sumatoria de los registros por un criterio
-
-    
+    return render_template("diario.html", grafico = graficoJSON, top3=lista_dias)
 
 
 
-
-
-
-    return render_template("diario.html")
 #-------------------------------------------------------------------------------
 @app.route("/post_filtro_fecha", methods = ['POST'])
 def post_filtro_fecha():
