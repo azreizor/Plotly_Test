@@ -1,4 +1,5 @@
-import json
+import json, math
+import types
 from flask import Flask, render_template, request, redirect, url_for
 from numpy import mod
 import pandas as pd
@@ -18,37 +19,56 @@ def diario():
     df["FECHA"] = pd.to_datetime(df["FECHA"]).dt.date
     sumatoria_dia = df.groupby("DIA_SEMANA").sum()
     dia_top3 = sumatoria_dia.nlargest(3,"TOTAL_DIARIO")
+    separados = []
     dias = []
+    
     colores = ["success", "warning", "danger"]
     for numero in range(dia_top3["TOTAL_DIARIO"].size):
         dias.append(dia_top3.index[numero])
+        separados.append(format(dia_top3["TOTAL_DIARIO"][numero], ',d'))
     dia_top3["DIA"] = dias
     dia_top3["COLORES"] = colores
+    dia_top3["SEPARADOS"] = separados
     print(dia_top3)
+    print(dia_top3.dtypes)
     lista_dias = dia_top3.values.tolist()
-    print(lista_dias)
-    fig = px.pie(data_frame = df, names = 'DIA_SEMANA' , values = 'TOTAL_DIARIO', title="Ventas Diarias")
-    fig.update_traces(textinfo="percent+label")
+    fig = px.pie(
+        data_frame = df,
+        names = 'DIA_SEMANA' ,
+        values = 'TOTAL_DIARIO',
+        title="Ventas Diarias",
+        color_discrete_sequence=px.colors.sequential.Emrld)
+    fig.update_traces(
+        textinfo="percent+label")
     graficoJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
+#------------------------------------------------------------------------------------------------------------------
     fig2 = go.Figure()
-    fig2.add_trace(go.Scatter(x=df["FECHA"], y=df["TOTAL_DIARIO"],
-                    mode='lines',
-                    name='lines'))
+    fig2.add_trace(
+        go.Scatter(
+            x=df["FECHA"],
+            y=df["TOTAL_DIARIO"],
+                mode='lines',
+                name='lines'))
     grafico2JSON = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
-
-    fig3 = go.Figure(go.Scatter(x = df['FECHA'], y = df['TOTAL_DIARIO'], mode='lines'))
+#------------------------------------------------------------------------------------------------------------------
+    fig3 = go.Figure(
+        go.Scatter(
+            x = df['FECHA'],
+            y = df['TOTAL_DIARIO'],
+            mode='lines'))
     grafico3JSON = json.dumps(fig3, cls=plotly.utils.PlotlyJSONEncoder)
-
+#------------------------------------------------------------------------------------------------------------------
     fig4 = go.Figure()
-    fig4.add_trace(go.Scatter(x=list(df["FECHA"]), y=list(df["TOTAL_DIARIO"])))
+    fig4.add_trace(
+        go.Scatter(
+            x=list(df["FECHA"]),
+            y=list(df["TOTAL_DIARIO"])))
     grafico4JSON = json.dumps(fig4, cls=plotly.utils.PlotlyJSONEncoder)
-
+#------------------------------------------------------------------------------------------------------------------
     lista_datos = df.values.tolist()
-    print(df.head(1))
+    #print(df.head(1))
 
-    return render_template("diario.html", grafico = graficoJSON, top3=lista_dias, plot2 = grafico2JSON, plot3 = grafico3JSON,
-    plot4 = grafico4JSON, lista_datos=lista_datos)
+    return render_template("diario.html", grafico = graficoJSON, top3=lista_dias, plot2 = grafico2JSON, lista_datos=lista_datos)
 
 
 

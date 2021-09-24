@@ -10,6 +10,7 @@
 
 {% block contentfluid %}
 
+<!-- ------------------------------------------------------------------------------------------------------- -->
 
 <div class="row page-titles mx-0">
     <div class="col-sm-6 p-md-0">
@@ -19,6 +20,8 @@
         </div>
     </div>
 </div>
+<!-- ------------------------------------------------------------------------------------------------------- -->
+
 <div class="row">
     {% for dias in top3 %}
     <div class="col-lg-4 col-sm-4">
@@ -26,7 +29,7 @@
             <div class="stat-widget-two card-body">
                 <div class="stat-content">
                     <div class="stat-text">{{dias[3]}}</div>
-                    <div class="stat-digit"> <i class="fa fa-usd"></i>{{dias[0]}}</div>
+                    <div class="stat-digit"> <i class="fa fa-usd"></i>{{dias[5]}}</div>
                 </div>
                 <div class="progress">
                     <div class="progress-bar progress-bar-{{dias[4]}} w-85" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
@@ -36,20 +39,21 @@
     </div>
     {% endfor %}
 </div>
-<!-- ------------------------------------------------------------------------------------------------------- -->
+<!-- ----------------------------------------GRAFICO 1 PIE--------------------------------------------------------------- -->
 
 <div class="row">
-    <div class="col-lg-8 col-sm-8">
+    <div class="col-lg-12 col-sm-12">
         <div id="chart_pie" class="chart_pie"></div>
     </div>
 </div>
-<!-- ------------------------------------------------------------------------------------------------------- -->
+<br>
+<!-- -----------------------------------------TABLA DATOS -------------------------------------------------------------- -->
 <br>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Basic Datatable</h4>
+                <h4 class="card-title">Ventas Diarias Totales</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -86,32 +90,10 @@
         </div>
     </div>
 </div>
-<!-- ------------------------------------------------------------------------------------------------------- -->
-<br>
+<!-- --------------------------------------------GRAFICO 2----------------------------------------------------------- -->
+
 <div class="row">
-    <div class="col-lg-8 col-sm-8">
-        <div class="card">
-            <div class="stat-widget-two card-body">
-                <div class="card-body">
-                    <div id="chart4"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-8 col-sm-8">
-        <div class="card">
-            <div class="stat-widget-two card-body">
-                <div class="card-body">
-                    <div id="chart1" class="chart1" name="chart1"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-8 col-sm-8">
+    <div class="col-lg-12 col-sm-12">
         <div class="card">
             <div class="stat-widget-two card-body">
                 <div class="card-body">
@@ -121,17 +103,34 @@
         </div>
     </div>
 </div>
+<!-- ----------------------------------------INTENTO DE GRAFICO TIEMPO REAL--------------------------------------------------------------- -->
 <div class="row">
-    <div class="col-lg-8 col-sm-8">
+    <div class="col-lg-6 col-sm-6">
         <div class="card">
-            <div class="stat-widget-two card-body">
-                <div class="card-body">
-                    <div id="chart3"></div>
-                </div>
+            <div class="card-header">
+                <h4 class="card-title">Realtime Chart</h4>
+            </div>
+            <div class="card-body">
+                <div id="flotRealtime1" class="flot-chart"></div>
             </div>
         </div>
     </div>
 </div>
+<!-- ----------------------------------------INTENTO DE GRAFICO TIEMPO REAL--------------------------------------------------------------- -->
+<div class="row">
+    <div class="col-lg-6 col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Realtime Chart</h4>
+            </div>
+            <div class="card-body">
+                <div id='graficoprueba'><!-- Plotly chart will be drawn inside this DIV --></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ------------------------------------------------------------------------------------------------------- -->
 {% endblock %}
 
 
@@ -140,29 +139,38 @@
 <script type="text/javascript">
     var graphs = {{grafico | safe}};
     Plotly.plot("chart_pie",graphs,{});
+
     var graphs2 = {{plot2 | safe}};
     Plotly.plot("chart2",graphs2,{});
-    var graphs3 = {{plot3 | safe}};
-    Plotly.plot("chart3",graphs3,{});
-    var graphs4 = {{plot4 | safe}};
-    Plotly.plot("chart4",graphs4,{});
+
+
 </script>
-<script src="{{url_for('static', filename = './js/apexcharts.js')}}"></script>
 <script>
- var options = {
-  chart: {
-    type: 'line'
-  },
-  series: [{
-    name: 'sales',
-    data: [30,40,35,50,49,60,70,91,125]
-  }],
-  xaxis: {
-    categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-  }
-}
-var chart = new ApexCharts(document.querySelector("#chart1"), options);
-chart.render();
+
+
+var trace1 = {
+  x: [1, 2, 3, 4],
+  y: [10, 15, 13, 17],
+  type: 'scatter'
+};
+
+var trace2 = {
+  x: [1, 2, 3, 4],
+  y: [16, 5, 11, 9],
+  type: 'scatter'
+};
+
+var data = [trace1, trace2];
+
+Plotly.newPlot('graficoprueba', data);
 </script>
+<script src="{{url_for('static', filename = './vendor/flot/jquery.flot.js')}}"></script>
+<script src="{{url_for('static', filename = './vendor/flot/jquery.flot.pie.js')}}"></script>
+<script src="{{url_for('static', filename = './vendor/flot/jquery.flot.resize.js')}}"></script>
+<script src="{{url_for('static', filename = './vendor/flot-spline/jquery.flot.spline.min.js')}}"></script>
+<script src="{{url_for('static', filename = './js/plugins-init/flot-init.js')}}"></script>
+<script src="{{url_for('static', filename = './js/plotly-latest.min.js')}}"></script>
+
+
 
 {% endblock %}
